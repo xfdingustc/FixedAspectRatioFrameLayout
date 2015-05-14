@@ -1,1 +1,1 @@
-..\gradlew.bat -b build.gradle uploadArchives
+..\gradlew.bat -b build.gradle bintray

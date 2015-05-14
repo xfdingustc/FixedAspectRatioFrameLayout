@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
 android {
     compileSdkVersion 22
@@ -22,35 +24,70 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-if (project.hasProperty('PUBLISH_GROUP_ID')) {
-    android.libraryVariants.all { variant ->
-        def name = variant.buildType.name
-        if (name.equals(com.android.builder.core.BuilderConstants.DEBUG)) {
-            return;
+def siteUrl = PROJ_WEBSITEURL
+def gitUrl = PROJ_VCSURL
+group = PROJ_GROUP
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                // Add your description here
+                name PROJ_NAME
+                url siteUrl
+                // Set your license
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'xfding'
+                        name 'xfdingustc'
+                        email 'xfdingustc@gmail.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
         }
-
-        def task = project.tasks.create(name: "jar${name.capitalize()}", type: Jar) {
-            from variant.javaCompile.destinationDir
-            exclude "**/R.class"
-            exclude "**/BuildConfig.class"
-        }
-        task.dependsOn variant.javaCompile
-        artifacts.add('archives', task)
-
     }
-    apply plugin: 'maven'
+}
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
 
-
-    uploadArchives {
-        println 'upload archives!!!'
-
-        repositories.mavenDeployer {
-            pom.packaging = "jar"
-            pom.groupId = PUBLISH_GROUP_ID
-            pom.artifactId = PUBLISH_ARTIFACT_ID
-            pom.version = PUBLISH_VERSION
-
-            repository(url: LOCAL_REPO)
-        }
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        name = "FixAspectRatioFrameLayout"
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
     }
 }
