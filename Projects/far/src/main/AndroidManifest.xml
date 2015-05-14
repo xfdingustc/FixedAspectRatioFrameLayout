@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.xfdingustc.fix_aspect_ratio">
+          package="com.xfdingustc.far">
 
     <application android:allowBackup="true"
                  android:label="@string/app_name"

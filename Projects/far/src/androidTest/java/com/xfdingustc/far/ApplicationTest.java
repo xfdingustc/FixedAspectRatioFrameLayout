@@ -1,4 +1,4 @@
-package com.xfdingustc.fix_aspect_ratio;
+package com.xfdingustc.far;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
