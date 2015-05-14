@@ -1,0 +1,1 @@
+..\gradlew.bat -b build.gradle uploadArchives
