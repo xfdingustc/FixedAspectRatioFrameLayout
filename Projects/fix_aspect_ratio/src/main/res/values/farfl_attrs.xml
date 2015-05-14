@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FixedAspectRatioFrameLayout">
+        <attr name="farfl_xratio" format="dimension" />
+        <attr name="farfl_yratio" format="dimension" />
+    </declare-styleable>
+</resources>
